@@ -134,28 +134,13 @@ def get_dealer_details(request, dealer_id):
 # ...
 @csrf_exempt
 def add_review(request):
-    if request.method == 'POST':
+    if(request.user.is_anonymous == False):
+        data = json.loads(request.body)
         try:
-            # Parse the JSON payload from the request body
-            data = json.loads(request.body)
-            print("Received data:", data)  # Log the received data
-
-            # Save the review to the database
-            review = Review(
-                name=data['name'],
-                dealership=data['dealership'],
-                review=data['review'],
-                purchase=data['purchase'],
-                purchase_date=data['purchase_date'],
-                car_make=data['car_make'],
-                car_model=data['car_model'],
-                car_year=data['car_year']
-            )
-            review.save()
-
-            return JsonResponse({"status": 200})
-        except Exception as e:
-            print("Error in add_review:", e)  # Log the error
-            return JsonResponse({"status": 500, "message": str(e)})
+            response = post_review(data)
+            return JsonResponse({"status":200})
+        except:
+            return JsonResponse({"status":401,"message":"Error in posting review"})
     else:
-        return JsonResponse({"status": 405, "message": "Method not allowed"})
+        return JsonResponse({"status":403,"message":"Unauthorized"})
+

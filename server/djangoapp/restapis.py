@@ -2,6 +2,7 @@
 import requests
 import os
 from dotenv import load_dotenv
+from django.views.decorators.csrf import csrf_exempt
 
 load_dotenv()
 
@@ -33,6 +34,7 @@ def get_request(endpoint, **kwargs):
 # def analyze_review_sentiments(text):
 # request_url = sentiment_analyzer_url+"analyze/"+text
 # Add code for retrieving sentiments
+@csrf_exempt
 def analyze_review_sentiments(text):
     request_url = sentiment_analyzer_url+"analyze/"+text
     try:
@@ -45,12 +47,12 @@ def analyze_review_sentiments(text):
 
 # def post_review(data_dict):
 # Add code for posting review
+@csrf_exempt
 def post_review(data_dict):
-    request_url = backend_url + "/insert_review"  # Ensure this URL is correct
+    request_url = backend_url+"/insert_review"
     try:
-        response = requests.post(request_url, json=data_dict)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-        return response.json()  # Return the JSON response
-    except requests.exceptions.RequestException as e:
-        print(f"Error posting review: {e}")
-        return None
+        response = requests.post(request_url,json=data_dict)
+        print(response.json())
+        return response.json()
+    except:
+        print("Network exception occurred")
